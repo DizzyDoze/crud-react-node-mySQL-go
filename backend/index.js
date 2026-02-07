@@ -1,13 +1,13 @@
 import express  from "express";
-import mysql from "mysql"
+import mysql from "mysql2"
 import cors from "cors"
 
 const app = express();
 
 const db = mysql.createConnection({
-    host: "localhost",
+    host: "db",   // this is the service name in docker compose file
     user: "root",
-    password: "",
+    password: "admin123",
     database: "test"
 })
 

@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: backend  # build the image from Dockerfile under backend
+    ports:
+      - "8800:8800"      # host: container, must be string
+    depends_on:
+      db:
+        condition: service_healthy  # docker keyword, look for healthcheck keyword
+  
+  frontend:
+    build:
+      context: frontend  # build the image from Dockerfile under frontend
+    ports:
+      - "4173:4173"      # host: container, must be string
+
+  db:
+    image: mysql:9.6
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: test
+    # map local path init.sql to mysql container path, it will auto run the init.sql
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    # backend container won't start until the mysql actually connected
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
